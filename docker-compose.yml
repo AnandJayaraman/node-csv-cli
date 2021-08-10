@@ -1,0 +1,57 @@
+version: '3'
+services:
+
+  coding-challenge-backend:
+    build:
+      context: ./backend
+    image: backend
+    container_name: coding-challenge-backend
+    working_dir: /var/www
+    ports:
+      - "8000:8080"
+    volumes:
+      - ./backend:/var/www
+      - '/var/www/node_modules'
+    networks:
+      - app-network
+
+  coding-challenge-db:
+    image: mysql:5.7
+    container_name: coding-challenge-db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: coding-challenge
+      MYSQL_ROOT_PASSWORD: your_mysql_root_password
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - app-network
+
+  coding-challenge-frontend:
+    build:
+      context: ./frontend
+    image: frontend
+    container_name: coding-challenge-frontend
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 80:3000
+    volumes:
+      - ./frontend:/var/www
+      - '/var/www/node_modules'
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local
