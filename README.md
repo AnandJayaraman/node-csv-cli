@@ -1,4 +1,4 @@
-# Sidekicker Coding Challenge
+
 
 ## Setup
 * Install [Docker](https://docs.docker.com/get-started/)
