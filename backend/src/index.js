@@ -7,18 +7,25 @@ cli(process.argv);
 function cli(args){
     const Fs = require('fs');
     const db = require("../src/models");
+    const moment = require('moment');
+
     const jobList = db.Jobslist;
     const CsvReadableStream = require('csv-reader');
     let tempJobList = [];
-    
-    let inputStream = Fs.createReadStream('./data/jobs-list.csv', 'utf8');
+    //./data/jobs-list.csv
+    let inputStream = Fs.createReadStream(args[2], 'utf8');
     
     inputStream
-        .pipe(new CsvReadableStream({ parseNumbers: true, parseBooleans: true, trim: true }))
+        .pipe(new CsvReadableStream({ skipHeader: true, asObject: true, parseNumbers: true, parseBooleans: true, trim: true }))
         .on('data', function (row) {
             console.log('A row arrived: ', row);
-            tempJobList.push(row);
-            // row to mapped using sequence cli to DB
+            const jobRow = {
+                jobTitle: row["job title"],
+                jobDescription: row["job description"],
+                date: moment(row["date"], 'DD/MM/YYYY'),
+                applicants: row["applicants"]
+            }
+            tempJobList.push(jobRow);
         })
         .on('end', function () {
             console.log('No more rows!');
