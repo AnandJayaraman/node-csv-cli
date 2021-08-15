@@ -12,3 +12,13 @@ describe("GET /", () => {
     expect(response.body).toEqual({ "message": "ok" });
   });
 });
+
+describe("GET /findAll", () => {
+  test("responds with ok", async () => {
+    const response = await request(app).get("/findAll");
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual({ "message": "executed find all" });
+  });
+});
+
+
